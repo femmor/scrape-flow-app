@@ -8,7 +8,7 @@ function Layout({ children }: { children: ReactNode }) {
         <div className='flex h-screen'>
             <DesktopSidebar />
             <div className='flex flex-col flex-1 min-h-screen'>
-                <Header siteTitle="ScrapeFlow" />
+                <Header />
                 <Separator />
                 <div className="overflow-auto">
                     <div className="flex-1 container py-4 text-accent-foreground">
