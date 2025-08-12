@@ -1,21 +1,14 @@
 "use client"
 
-import { CoinsIcon, HomeIcon, Layers2Icon, ShieldCheckIcon } from "lucide-react"
 import Logo from "./Logo"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { buttonVariants } from "./ui/button"
-
-const routes = [
-    { href: '/', label: 'Home', icon: HomeIcon },
-    { href: 'workflows', label: 'Workflows', icon: Layers2Icon },
-    { href: 'credentials', label: 'Credentials', icon: ShieldCheckIcon },
-    { href: 'billing', label: 'Billing', icon: CoinsIcon },
-]
+import { routes } from "@/lib/routes"
 
 function DesktopSidebar() {
-
     const pathname = usePathname()
+    // Get the current active route based on the pathname
     const activeRoute = routes.find((route) => route.href.length > 1 && pathname.includes(route.href)) || routes[0]
 
     return (
