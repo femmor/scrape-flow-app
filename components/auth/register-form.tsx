@@ -25,6 +25,8 @@ import z from "zod"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
+import { signUpUser } from "@/server/users"
+import { toast } from "sonner"
 
 export function RegisterForm({
     className,
@@ -48,14 +50,16 @@ export function RegisterForm({
     async function onSubmit(values: z.infer<typeof registerValidator>) {
         setIsLoading(true)
 
-        // Simulate a registration API call
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        console.log("User registered:", values)
+        const { success, message } = await signUpUser(values.username, values.email, values.password);
 
-        // On success, redirect to the dashboard
-        // router.push("/dashboard")
+        if (success) {
+            toast.success(message as string)
+            router.push("/");
+        } else {
+            toast.error(message as string)
+        }
 
-        setIsLoading(false)
+        setIsLoading(false);
     }
 
     return (
