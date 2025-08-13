@@ -17,19 +17,21 @@ export const auth = betterAuth({
     secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET,
     emailAndPassword: {
         enabled: true,
-        sendResetPassword: async ({ user, url }) => {
+        requireEmailVerification: false,
+        async sendResetPassword({ user, url, token }) {
+            // Custom reset URL that points to your reset password page
+            const resetUrl = `${process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+            
             try {
-                console.log('Attempting to send reset password email to:', user.email);
-                console.log('Reset URL:', url);
-
                 const result = await resend.emails.send({
                     from: "onboarding@resend.dev", // Use Resend's testing domain
                     to: user.email,
                     subject: "Reset your password",
-                    react: ForgotPasswordEmail({ username: user.name, resetUrl: url, userEmail: user.email }),
+                    react: ForgotPasswordEmail({ username: user.name || user.email, resetUrl, userEmail: user.email }),
                 });
 
                 console.log('Email sent successfully:', result);
+                console.log('Reset URL sent:', resetUrl);
             } catch (error) {
                 console.error('Failed to send reset password email:', error);
                 throw error;
