@@ -17,15 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signInValidator } from "@/lib/validators/signInValidator"
 import z from "zod"
-import { signInUser } from "@/server/users"
+import { signIn } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
@@ -34,7 +32,6 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
   // Initialize the form with Zod validation
   const form = useForm<z.infer<typeof signInValidator>>({
@@ -49,13 +46,28 @@ export function LoginForm({
   async function onSubmit(values: z.infer<typeof signInValidator>) {
     setIsLoading(true)
 
-    const { success, message } = await signInUser(values.email, values.password);
+    try {
+      const result = await signIn.email({
+        email: values.email,
+        password: values.password,
+      });
 
-    if (success) {
-      toast.success(message as string)
-      router.push("/");
-    } else {
-      toast.error(message as string)
+      if (result.error) {
+        toast.error(result.error.message || "Sign-in failed")
+      } else {
+        toast.success("Sign in successful")
+
+        // Small delay to ensure session is set
+        setTimeout(() => {
+          // Check for callback URL and redirect accordingly
+          const urlParams = new URLSearchParams(window.location.search)
+          const callbackUrl = urlParams.get('callbackUrl') || '/'
+
+          window.location.href = callbackUrl; // Using window.location for full page refresh
+        }, 100)
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred")
     }
 
     setIsLoading(false);

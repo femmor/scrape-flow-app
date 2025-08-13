@@ -25,7 +25,7 @@ import z from "zod"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
-import { signUpUser } from "@/server/users"
+import { signUp } from "@/lib/auth-client"
 import { toast } from "sonner"
 
 export function RegisterForm({
@@ -50,13 +50,25 @@ export function RegisterForm({
     async function onSubmit(values: z.infer<typeof registerValidator>) {
         setIsLoading(true)
 
-        const { success, message } = await signUpUser(values.username, values.email, values.password);
+        try {
+            const result = await signUp.email({
+                email: values.email,
+                password: values.password,
+                name: values.username,
+            });
 
-        if (success) {
-            toast.success(message as string)
-            router.push("/");
-        } else {
-            toast.error(message as string)
+            if (result.error) {
+                toast.error(result.error.message || "Sign-up failed")
+            } else {
+                toast.success("Account created successfully")
+
+                // Small delay to ensure session is set
+                setTimeout(() => {
+                    window.location.href = "/"; // Use window.location for full page refresh
+                }, 100)
+            }
+        } catch (error) {
+            toast.error("An unexpected error occurred")
         }
 
         setIsLoading(false);

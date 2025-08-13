@@ -46,3 +46,20 @@ export const signOutUser = async () => {
         return { success: false, message: e.message || "Something went wrong, please try again!" };
     }
 }
+
+export const getUserSession = async () => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
+
+        if (!session) {
+            return { success: false, session: null, user: null };
+        }
+
+        return { success: true, session, user: session.user };
+    } catch (error) {
+        const e = error as Error;
+        return { success: false, message: e.message || "Failed to retrieve user session", session: null, user: null };
+    }
+}
