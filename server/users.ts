@@ -1,6 +1,7 @@
 "use server"
 
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const signUpUser = async (username: string, email: string, password: string) => {
     try {
@@ -31,5 +32,18 @@ export const signInUser = async (email: string, password: string) => {
     } catch (error) {
         const e = error as Error;
         return { success: false, message: e.message || "Sign-in failed" };
+    }
+}
+
+export const signOutUser = async () => {
+    try {
+        await auth.api.signOut({
+            // This endpoint requires session cookies.
+            headers: headers(),
+        });
+        return { success: true, message: "Sign out successful" }
+    } catch (error) {
+        const e = error as Error;
+        return { success: false, message: e.message || "Something went wrong, please try again!" };
     }
 }
