@@ -39,7 +39,7 @@ const MobileSidebar = () => {
                                 Mobile navigation menu with links to different sections of the application
                             </SheetDescription>
                         </SheetHeader>
-                        <Logo />
+                        <Logo href="/" />
                         <div className="flex flex-col gap-1" role="navigation" aria-label="Main navigation">
                             {routes.map((route) => (
                                 <Link

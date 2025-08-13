@@ -7,11 +7,12 @@ type LogoProps = {
     fontSize?: string;
     iconSize?: number;
     ariaLabel?: string;
+    href: string;
 }
 
-function Logo({ fontSize = "text-2xl", iconSize = 20, ariaLabel }: LogoProps) {
+function Logo({ fontSize = "text-2xl", iconSize = 20, ariaLabel, href }: LogoProps) {
     return (
-        <Link className={cn("text-2xl font-bold flex items-center gap-2", fontSize)} href="/" aria-label={ariaLabel}>
+        <Link className={cn("text-2xl font-bold flex items-center gap-2", fontSize)} href={href} aria-label={ariaLabel}>
             <div className="rounded-xl bg-gradient-to-r from-emerald-300 to-emerald-500 p-2">
                 <SquareDashedMousePointer size={iconSize} className="stroke-white" />
             </div>

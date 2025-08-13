@@ -16,7 +16,7 @@ function DesktopSidebar() {
             className="hidden relative md:block min-w-[200px] max-w-[230px] n-screen overflow-hidden w-full bg-primary/5 dark:bg-secondary/50 dark:text-foreground text-muted-foreground border-r-2 border-separate"
         >
             <div className="flex items-center justify-center gap-2 border-b-[1px] border-separate p-4">
-                <Logo />
+                <Logo href="/" />
             </div>
             {/* TODO: Add user credit badge component here */}
             <div className="p-2">User Credit Badge</div>
