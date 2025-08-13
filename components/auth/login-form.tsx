@@ -26,12 +26,16 @@ import z from "zod"
 import { signIn } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
 
   // Initialize the form with Zod validation
   const form = useForm<z.infer<typeof signInValidator>>({
@@ -57,14 +61,9 @@ export function LoginForm({
       } else {
         toast.success("Sign in successful")
 
-        // Small delay to ensure session is set
-        setTimeout(() => {
-          // Check for callback URL and redirect accordingly
-          const urlParams = new URLSearchParams(window.location.search)
-          const callbackUrl = urlParams.get('callbackUrl') || '/'
-
-          window.location.href = callbackUrl; // Using window.location for full page refresh
-        }, 100)
+        // Use router.push for proper Next.js navigation
+        router.push(callbackUrl)
+        router.refresh() // Refresh to update server state
       }
     } catch (error) {
       toast.error("An unexpected error occurred")

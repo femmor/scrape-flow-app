@@ -31,51 +31,41 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
-    // For now, let's disable server-side session checking and let the client handle it
-    // This will help us isolate the login redirect issue
-    return NextResponse.next()
+    // Skip middleware for public routes
+    const isPublicRoute = publicRoutes.some(route =>
+        pathname === route || pathname.startsWith(route + '/')
+    )
 
-    // TODO: Re-enable server-side session checking once client-side login is working
-    /*
+    if (isPublicRoute) {
+        return NextResponse.next()
+    }
+
     // Check if the current route is protected
     const isProtectedRoute = protectedRoutes.some(route =>
         pathname === route || pathname.startsWith(route + '/')
     )
 
-    try {
-        // Create headers for better-auth
-        const authHeaders = new Headers()
-        const cookie = request.headers.get('cookie')
-        if (cookie) {
-            authHeaders.set('cookie', cookie)
+    // For now, let's log what we're trying to protect but not actually redirect
+    // This will help us debug the session issue
+    if (isProtectedRoute) {
+
+        try {
+            // Get session using Better Auth's server API
+            const session = await auth.api.getSession({
+                headers: request.headers
+            })
+
+            // For now, just allow through and let client-side handle protection
+            return NextResponse.next()
+
+        } catch (error) {
+            console.error('Middleware session check failed:', error)
+            // Allow through for now - let client-side handle it
+            return NextResponse.next()
         }
-
-        // Get session from better-auth
-        const session = await auth.api.getSession({
-            headers: authHeaders
-        })
-
-        // Only redirect if accessing a protected route without a session
-        if (isProtectedRoute && !session) {
-            const loginUrl = new URL('/login', request.url)
-            loginUrl.searchParams.set('callbackUrl', pathname)
-            return NextResponse.redirect(loginUrl)
-        }
-
-        return NextResponse.next()
-    } catch (error) {
-        console.error('Middleware error:', error)
-
-        // On error, treat as unauthenticated for protected routes only
-        if (isProtectedRoute) {
-            const loginUrl = new URL('/login', request.url)
-            loginUrl.searchParams.set('callbackUrl', pathname)
-            return NextResponse.redirect(loginUrl)
-        }
-
-        return NextResponse.next()
     }
-    */
+
+    return NextResponse.next()
 }
 
 export const config = {

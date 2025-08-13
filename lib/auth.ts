@@ -10,9 +10,11 @@ const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
-        provider: "pg", // or "pg" or "mysql"
+        provider: "pg",
         schema
     }),
+    baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
+    secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET,
     emailAndPassword: {
         enabled: true,
         sendResetPassword: async ({ user, url }) => {
