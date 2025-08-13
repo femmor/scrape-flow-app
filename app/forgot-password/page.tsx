@@ -1,5 +1,5 @@
 
-import { ForgotPasswordForm } from "@/components/forgot-password-form"
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form"
 import Logo from "@/components/Logo"
 
 export default function ForgotPasswordPage() {
