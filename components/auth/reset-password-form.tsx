@@ -77,7 +77,7 @@ export function ResetPasswordForm({
         toast.error(result.error.message || "Password reset failed")
       } else {
         toast.success("Password reset successfully!")
-        
+
         // Redirect to login after successful reset
         setTimeout(() => {
           router.push("/login")
@@ -104,7 +104,7 @@ export function ResetPasswordForm({
           <CardContent>
             <div className="text-center space-y-4">
               <p className="text-sm text-muted-foreground">
-                Please request a new password reset from the login page.
+                Please request a new password reset.
               </p>
               <Button onClick={() => router.push("/forgot-password")} className="w-full">
                 Request New Reset Link

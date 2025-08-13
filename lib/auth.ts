@@ -21,7 +21,7 @@ export const auth = betterAuth({
         async sendResetPassword({ user, url, token }) {
             // Custom reset URL that points to your reset password page
             const resetUrl = `${process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"}/reset-password?token=${token}`;
-            
+
             try {
                 const result = await resend.emails.send({
                     from: "onboarding@resend.dev", // Use Resend's testing domain
