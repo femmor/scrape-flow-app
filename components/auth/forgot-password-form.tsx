@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { forgotPasswordValidator } from "@/lib/validators/forgotPasswordValidator"
+import { forgotPasswordValidator } from "@/lib/validators/auth-schema/forgotPasswordValidator"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import z from "zod"
