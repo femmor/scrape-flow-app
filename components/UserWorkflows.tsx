@@ -1,6 +1,5 @@
 
 import { GetWorkflowsForUser } from "@/actions/workflows/getWorkflowsForUser";
-import { waitFor } from "@/lib/helpers/waitFor";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, InboxIcon } from "lucide-react";
 import CreateWorkflowDialog from "@/app/(dashboard)/workflows/_components/CreateWorkflowDialog";
@@ -36,11 +35,9 @@ const UserWorkflows = async () => {
     }
 
     return (
-        <div>
-            {workflows.map(workflow => (
-                <div key={workflow.id}>{workflow.name}</div>
-            ))}
-        </div>
+        <pre>
+            {JSON.stringify(workflows, null, 4)}
+        </pre>
     )
 }
 
