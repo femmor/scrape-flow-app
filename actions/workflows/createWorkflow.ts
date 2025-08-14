@@ -5,6 +5,7 @@ import { CreateWorkflowSchema, createWorkflowValidator } from "@/lib/validators/
 import { requireServerAuth } from "@/lib/server-auth";
 import { WorkflowStatus } from "@/types";
 import { redirect } from "next/navigation";
+import { handleWorkflowPrismaError } from "@/lib/helpers/prisma-error-handler";
 
 export async function CreateWorkflow(values: CreateWorkflowSchema) {
     // Authenticate user
@@ -21,20 +22,25 @@ export async function CreateWorkflow(values: CreateWorkflowSchema) {
         throw new Error("Invalid workflow data");
     }
 
-    // Create workflow with required fields
-    const workflow = await prisma.workflow.create({
-        data: {
-            ...data,
-            userId: user.id,
-            definition: "TODO",
-            status: WorkflowStatus.DRAFT,
+    try {
+        // Create workflow with required fields
+        const workflow = await prisma.workflow.create({
+            data: {
+                ...data,
+                userId: user.id,
+                definition: "TODO",
+                status: WorkflowStatus.DRAFT,
+            }
+        });
+
+        if (!workflow) {
+            throw new Error("Failed to create workflow");
         }
-    });
 
-    if (!workflow) {
-        throw new Error("Failed to create workflow");
+        redirect(`/workflow/editor/${workflow.id}`);
+    } catch (error) {
+        // Handle Prisma errors with custom error messages
+        const errorMessage = handleWorkflowPrismaError(error, data.name);
+        throw new Error(errorMessage);
     }
-
-    redirect(`/workflow/editor/${workflow.id}`);
-    return workflow;
 }

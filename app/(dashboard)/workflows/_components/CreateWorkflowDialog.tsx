@@ -47,10 +47,20 @@ const CreateWorkflowDialog = ({ triggerText }: { triggerText?: string }) => {
         },
         onError: (error) => {
             toast.dismiss("create-workflow-loading");
-            console.error("Failed to create workflow:", error);
-            toast.error("Failed to create workflow", {
-                id: "create-workflow-error",
-            });
+            const errorMessage = error instanceof Error ? error.message : "Failed to create workflow";
+
+            // If it's a name-related error, set it on the form field
+            if (errorMessage.includes("already have a workflow named") || errorMessage.includes("name")) {
+                form.setError("name", {
+                    type: "manual",
+                    message: "The workflow name already exists. Please choose a different name.",
+                });
+            } else {
+                // Show generic toast for other errors
+                toast.error(errorMessage, {
+                    id: "create-workflow-error",
+                });
+            }
         }
     });
 
@@ -62,7 +72,10 @@ const CreateWorkflowDialog = ({ triggerText }: { triggerText?: string }) => {
     }, [mutate]);
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(open) => {
+            form.reset();
+            setOpen(open);
+        }}>
             <DialogTrigger asChild>
                 <Button>{triggerText ?? "Create Workflow"}</Button>
             </DialogTrigger>
@@ -85,11 +98,8 @@ const CreateWorkflowDialog = ({ triggerText }: { triggerText?: string }) => {
                                                 <FormItem>
                                                     <FormLabel>Name <span className="text-red-500">*</span></FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter workflow name" {...field} />
+                                                        <Input placeholder="Choose a unique name for your workflow" {...field} />
                                                     </FormControl>
-                                                    <FormDescription>
-                                                        Choose a descriptive name for your workflow.
-                                                    </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -103,11 +113,8 @@ const CreateWorkflowDialog = ({ triggerText }: { triggerText?: string }) => {
                                                 <FormItem>
                                                     <FormLabel>Description <span className="text-muted-foreground">(optional)</span></FormLabel>
                                                     <FormControl>
-                                                        <Textarea placeholder="Enter workflow description" {...field} className="resize-none" />
+                                                        <Textarea placeholder="Provide a brief description of your workflow." {...field} className="resize-none" />
                                                     </FormControl>
-                                                    <FormDescription>
-                                                        Provide a brief description of your workflow.
-                                                    </FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
