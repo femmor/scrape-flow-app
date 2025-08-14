@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Scrape Flow",
-  description: "A tool for creating workflows using AI",
+  description: "Scrape flow is a fullstack sass app that let's users scrape websites visually using a workflow powered by AI, credentials system and scheduling system.",
 };
 
 export default function RootLayout({
