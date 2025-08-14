@@ -6,6 +6,7 @@ import { requireServerAuth } from "@/lib/server-auth";
 import { WorkflowStatus } from "@/types";
 import { redirect } from "next/navigation";
 import { handleWorkflowPrismaError } from "@/lib/helpers/prisma-error-handler";
+import { revalidatePath } from "next/cache";
 
 export async function CreateWorkflow(values: CreateWorkflowSchema) {
     // Authenticate user
@@ -37,7 +38,11 @@ export async function CreateWorkflow(values: CreateWorkflowSchema) {
             throw new Error("Failed to create workflow");
         }
 
+        // Revalidate the workflows page
+        revalidatePath(`/workflows`);
+        // Redirect to the workflow editor
         redirect(`/workflow/editor/${workflow.id}`);
+
     } catch (error) {
         // Handle Prisma errors with custom error messages
         const errorMessage = handleWorkflowPrismaError(error, data.name);
