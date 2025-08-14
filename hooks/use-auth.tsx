@@ -35,15 +35,3 @@ export function useAuth() {
         redirectIfAuthenticated,
     }
 }
-
-// Server-side utility function
-export async function requireServerAuth() {
-    const { getServerSession } = await import('@/components/ProtectedRoute')
-    const session = await getServerSession()
-
-    if (!session?.user) {
-        throw new Error('Authentication required')
-    }
-
-    return { session, user: session.user }
-}
